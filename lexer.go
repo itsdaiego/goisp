@@ -1,38 +1,40 @@
 package main
 
 import (
-  "fmt"
-  "unicode"
+	"fmt"
+	"unicode"
 )
 
 func isValidToken(token rune) bool {
-  if token == ')' || token == '(' {
-    return true
-  }
+	if token == ')' || token == '(' {
+		return true
+	}
 
-  operations := []rune{'+', '-', '*', '/'}
+	operations := []rune{'+', '-', '*', '/'}
 
-  for _, operation := range operations {
-    if token == operation {
-      return true
-    }
-  }
+	for _, operation := range operations {
+		if token == operation {
+			return true
+		}
+	}
 
-  return unicode.IsDigit(token)
+	return unicode.IsDigit(token)
 }
 
 func tokenize(input string) ([]rune, error) {
-  tokens := make([]rune, 0)
+	tokens := make([]rune, 0)
 
-  for _, c := range input {
-    fmt.Printf("%c", c)
-    if !isValidToken(c) && !unicode.IsSpace(c){
-      fmt.Printf("\nInvalid token: %c\n", c)
-      return nil, fmt.Errorf("Invalid token: %c", c)
-    }
+	for _, c := range input {
+		fmt.Printf("%c", c)
+		if !isValidToken(c) && !unicode.IsSpace(c) {
+			fmt.Printf("\nInvalid token: %c\n", c)
+			return nil, fmt.Errorf("Invalid token: %c", c)
+		}
 
-    tokens = append(tokens, rune(c))
-  }
+		if !unicode.IsSpace(c) {
+			tokens = append(tokens, rune(c))
+		}
+	}
 
-  return tokens, nil
+	return tokens, nil
 }
