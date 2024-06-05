@@ -11,15 +11,6 @@ var (
 	operations = []rune{'+', '-', '*', '/'}
 )
 
-type AST struct {
-	Root *Node
-}
-
-type Node struct {
-	Operation   rune
-	Left, Right *Node
-}
-
 func isOperation(token rune) bool {
 	for _, op := range operations {
 		if token == op {
@@ -52,6 +43,7 @@ func parse(tokens []rune, index int, parent interface{}) (int, error) {
 		return 0, fmt.Errorf("Syntax Error: Expected operator after '(', found '%c'", tokens[index])
 	}
 
+  fmt.Println("PARSING", string(tokens[index]))
 	node.Operation = tokens[index]
 
 	index++
@@ -65,7 +57,7 @@ func parse(tokens []rune, index int, parent interface{}) (int, error) {
 				return 0, err
 			}
 		} else if unicode.IsDigit(tokens[index]) {
-			digitNode := &Node{Operation: tokens[index]}
+			digitNode := &Node{Value: tokens[index]}
 			if operandCount == 0 {
 				node.Left = digitNode
 			} else {
