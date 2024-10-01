@@ -8,13 +8,13 @@ import (
 )
 
 type AST struct {
-	Root *Node
-  Tokens []rune
+	Root   *Node
+	Tokens []rune
 }
 
 type Node struct {
 	Operation   rune
-  Value rune
+	Value       rune
 	Left, Right *Node
 }
 
@@ -24,11 +24,11 @@ func printTree(node *Node, depth int) {
 	}
 
 	indent := strings.Repeat("  ", depth)
-  if (isOperation(node.Operation)) {
-    fmt.Printf("%s%c\n", indent, node.Operation)
-  } else {
-    fmt.Printf("%s%c\n", indent, node.Value)
-  }
+	if isOperation(node.Operation) {
+		fmt.Printf("%s%c\n", indent, node.Operation)
+	} else {
+		fmt.Printf("%s%c\n", indent, node.Value)
+	}
 
 	printTree(node.Left, depth+2)
 	printTree(node.Right, depth+2)
@@ -44,9 +44,9 @@ func main() {
 
 	tokenRunes := []rune(input)
 
-  ast := &AST{
-    Tokens: tokenRunes,
-  }
+	ast := &AST{
+		Tokens: tokenRunes,
+	}
 
 	_, parseError := ast.Parse(0, ast)
 

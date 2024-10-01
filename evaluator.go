@@ -7,7 +7,7 @@ import (
 
 func (ast *AST) Evaluate(node *Node) int {
 	if node == nil {
-    node = ast.Root
+		node = ast.Root
 	}
 
 	if node.Left == nil && node.Right == nil {
