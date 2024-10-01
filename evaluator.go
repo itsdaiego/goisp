@@ -10,8 +10,6 @@ func (ast *AST) Evaluate(node *Node) int {
     node = ast.Root
 	}
 
-  fmt.Println("Source value", string(node.Operation))
-
 	if node.Left == nil && node.Right == nil {
 		if num, err := strconv.Atoi(string(node.Value)); err == nil {
 			return num
