@@ -20,9 +20,9 @@ func isOperation(token rune) bool {
 	return false
 }
 
-func parse(tokens []rune, index int, parent interface{}) (int, error) {
-	if tokens[index] != ParenOpen {
-		return 0, fmt.Errorf("Syntax Error: Expected '(', found '%c'", tokens[index])
+func (ast *AST) Parse(index int, parent interface{}) (int, error) {
+	if ast.Tokens[index] != ParenOpen {
+		return 0, fmt.Errorf("Syntax Error: Expected '(', found '%c'", ast.Tokens[index])
 	}
 
 	node := &Node{}
@@ -39,25 +39,25 @@ func parse(tokens []rune, index int, parent interface{}) (int, error) {
 
 	index++
 
-	if index == len(tokens) || !isOperation(tokens[index]) {
-		return 0, fmt.Errorf("Syntax Error: Expected operator after '(', found '%c'", tokens[index])
+	if index == len(ast.Tokens) || !isOperation(ast.Tokens[index]) {
+		return 0, fmt.Errorf("Syntax Error: Expected operator after '(', found '%c'", ast.Tokens[index])
 	}
 
-  fmt.Println("PARSING", string(tokens[index]))
-	node.Operation = tokens[index]
+  fmt.Println("PARSING", string(ast.Tokens[index]))
+	node.Operation = ast.Tokens[index]
 
 	index++
 	operandCount := 0
 
-	for index < len(tokens) && tokens[index] != ParenClose {
-		if tokens[index] == ParenOpen {
+	for index < len(ast.Tokens) && ast.Tokens[index] != ParenClose {
+		if ast.Tokens[index] == ParenOpen {
 			var err error
-			index, err = parse(tokens, index, node)
+			index, err = ast.Parse(index, node)
 			if err != nil {
 				return 0, err
 			}
-		} else if unicode.IsDigit(tokens[index]) {
-			digitNode := &Node{Value: tokens[index]}
+		} else if unicode.IsDigit(ast.Tokens[index]) {
+			digitNode := &Node{Value: ast.Tokens[index]}
 			if operandCount == 0 {
 				node.Left = digitNode
 			} else {
@@ -65,13 +65,13 @@ func parse(tokens []rune, index int, parent interface{}) (int, error) {
 			}
 			index++
 		} else {
-			return 0, fmt.Errorf("Syntax Error: Invalid token '%c' in expression", tokens[index])
+			return 0, fmt.Errorf("Syntax Error: Invalid token '%c' in expression", ast.Tokens[index])
 		}
 
 		operandCount++
 	}
 
-	if index == len(tokens) || tokens[index] != ParenClose {
+	if index == len(ast.Tokens) || ast.Tokens[index] != ParenClose {
 		return 0, fmt.Errorf("Syntax Error: Expected ')'")
 	}
 

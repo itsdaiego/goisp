@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
 )
 
 type AST struct {
 	Root *Node
+  Tokens []rune
 }
 
 type Node struct {
@@ -34,21 +37,18 @@ func printTree(node *Node, depth int) {
 func main() {
 	fmt.Println("Start tokenization")
 
-	// tokenRunes, tokenError := tokenize("(- (+ (+ 1 4) 5) 5)")
-	// tokenRunes, tokenError := tokenize("(+ 2 (- 4 (+ 3 4)) )")
-	tokenRunes, tokenError := tokenize("(+ 2 (* 5 5))")
+	reader := bufio.NewReader(os.Stdin)
 
-	if tokenError != nil {
-		fmt.Println("Error tokenizing input", tokenError)
+	input, _ := reader.ReadString('\n')
+	input = strings.TrimSpace(input)
 
-		return
-	}
+	tokenRunes := []rune(input)
 
-	fmt.Println("\nStart parsing")
+  ast := &AST{
+    Tokens: tokenRunes,
+  }
 
-	ast := &AST{}
-
-	_, parseError := parse(tokenRunes, 0, ast)
+	_, parseError := ast.Parse(0, ast)
 
 	if parseError != nil {
 		fmt.Println("Error parsing tokens", parseError)
@@ -60,9 +60,9 @@ func main() {
 
 	fmt.Println("Syntax is correct!")
 
-  fmt.Println("\nStart evaluating")
+	fmt.Println("\nStart evaluating")
 
-  result := evaluate(ast.Root)
+	result := ast.Evaluate(nil)
 
-  fmt.Println("Result:", result)
+	fmt.Println("Result:", result)
 }

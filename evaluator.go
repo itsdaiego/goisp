@@ -5,9 +5,9 @@ import (
 	"strconv"
 )
 
-func evaluate(node *Node) int {
+func (ast *AST) Evaluate(node *Node) int {
 	if node == nil {
-		return 0
+    node = ast.Root
 	}
 
   fmt.Println("Source value", string(node.Operation))
@@ -19,8 +19,8 @@ func evaluate(node *Node) int {
 		return 0
 	}
 
-	leftVal := evaluate(node.Left)
-	rightVal := evaluate(node.Right)
+	leftVal := ast.Evaluate(node.Left)
+	rightVal := ast.Evaluate(node.Right)
 
 	switch node.Operation {
 	case '+':
