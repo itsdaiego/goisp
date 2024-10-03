@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"unicode"
 )
 
 type AST struct {
 	Root   *Node
-	Tokens []rune
+	Tokens []Token
 }
 
 type Node struct {
@@ -18,16 +19,18 @@ type Node struct {
 	Left, Right *Node
 }
 
+
 func printTree(node *Node, depth int) {
 	if node == nil {
 		return
 	}
 
 	indent := strings.Repeat("  ", depth)
-	if isOperation(node.Operation) {
-		fmt.Printf("%s%c\n", indent, node.Operation)
-	} else {
+
+	if unicode.IsDigit(node.Value) {
 		fmt.Printf("%s%c\n", indent, node.Value)
+	} else {
+		fmt.Printf("%s%c\n", indent, node.Operation)
 	}
 
 	printTree(node.Left, depth+2)
@@ -42,10 +45,10 @@ func main() {
 	input, _ := reader.ReadString('\n')
 	input = strings.TrimSpace(input)
 
-	tokenRunes := []rune(input)
+  tokenized, _ := tokenize(input)
 
 	ast := &AST{
-		Tokens: tokenRunes,
+		Tokens: tokenized,
 	}
 
 	_, parseError := ast.Parse(0, ast)
