@@ -5,12 +5,10 @@ import (
 	"unicode"
 )
 
-
 type Token struct {
 	Type  string
 	Value rune
 }
-
 
 const (
 	LPAREN string = "LPAREN"

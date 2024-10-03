@@ -19,7 +19,6 @@ type Node struct {
 	Left, Right *Node
 }
 
-
 func printTree(node *Node, depth int) {
 	if node == nil {
 		return
@@ -45,10 +44,10 @@ func main() {
 	input, _ := reader.ReadString('\n')
 	input = strings.TrimSpace(input)
 
-  tokenized, _ := tokenize(input)
+	tokenInputs, _ := tokenize(input)
 
 	ast := &AST{
-		Tokens: tokenized,
+		Tokens: tokenInputs,
 	}
 
 	_, parseError := ast.Parse(0, ast)

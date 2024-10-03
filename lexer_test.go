@@ -6,9 +6,9 @@ import (
 )
 
 var TOKENS_MAP = map[rune]string{
-  '(': "ParenOpen",
-  ')': "ParenClose",
-  '+': "Plus",
+	'(': "ParenOpen",
+	')': "ParenClose",
+	'+': "Plus",
 }
 
 func TestIsValidToken(t *testing.T) {

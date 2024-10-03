@@ -4,11 +4,10 @@ import (
 	"fmt"
 )
 
-
 func isOperation(token Token) bool {
-  var operations = []rune{'+', '-', '*', '/'}
+	var operations = []rune{'+', '-', '*', '/'}
 	for _, op := range operations {
-    if token.Value == op {
+		if token.Value == op {
 			return true
 		}
 	}
@@ -40,9 +39,9 @@ func (ast *AST) Parse(index int, parent interface{}) (int, error) {
 		return 0, fmt.Errorf("Syntax Error: Expected operator after '(', found '%c'", ast.Tokens[index].Value)
 	}
 
-  if (isOperation(ast.Tokens[index])) {
-    node.Operation = ast.Tokens[index].Value
-  }
+	if isOperation(ast.Tokens[index]) {
+		node.Operation = ast.Tokens[index].Value
+	}
 
 	// we increase it again to start parsing the operands
 	// or the next '('
