@@ -41,7 +41,7 @@ func isValidToken(token rune) bool {
 func tokenize(input string) ([]Token, error) {
 	tokens := make([]Token, 0)
 
-	for i, c := range input {
+	for _, c := range input {
 		if unicode.IsSpace(c) {
 			continue
 		}

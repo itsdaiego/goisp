@@ -18,7 +18,7 @@ func isOperation(token Token) bool {
 func (ast *AST) Parse(index int, parent interface{}) (int, error) {
 	// every expression should start with a '('
 	if ast.Tokens[index].Type != LPAREN {
-		return 0, fmt.Errorf("Syntax Error: Expected '(', found '%c'", ast.Tokens[index])
+		return 0, fmt.Errorf("Syntax Error: Expected '(', found '%c'", ast.Tokens[index].Value)
 	}
 
 	node := &Node{}
@@ -37,7 +37,7 @@ func (ast *AST) Parse(index int, parent interface{}) (int, error) {
 	index++
 
 	if index == len(ast.Tokens) || !isOperation(ast.Tokens[index]) {
-		return 0, fmt.Errorf("Syntax Error: Expected operator after '(', found '%c'", ast.Tokens[index])
+		return 0, fmt.Errorf("Syntax Error: Expected operator after '(', found '%c'", ast.Tokens[index].Value)
 	}
 
   if (isOperation(ast.Tokens[index])) {
@@ -65,7 +65,7 @@ func (ast *AST) Parse(index int, parent interface{}) (int, error) {
 			}
 			index++
 		} else {
-			return 0, fmt.Errorf("Syntax Error: Invalid token '%c' in expression", ast.Tokens[index])
+			return 0, fmt.Errorf("Syntax Error: Invalid token '%c' in expression", ast.Tokens[index].Value)
 		}
 
 		operandCount++
