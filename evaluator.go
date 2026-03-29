@@ -11,7 +11,11 @@ func (ast *AST) Evaluate(node *Node) int {
 	}
 
 	if node.Left == nil && node.Right == nil {
-		if num, err := strconv.Atoi(string(node.Value)); err == nil {
+		value := node.Literal
+		if value == "" {
+			value = string(node.Value)
+		}
+		if num, err := strconv.Atoi(value); err == nil {
 			return num
 		}
 		return 0

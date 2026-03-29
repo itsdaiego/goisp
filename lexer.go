@@ -6,8 +6,9 @@ import (
 )
 
 type Token struct {
-	Type  string
-	Value rune
+	Type    string
+	Value   rune
+	Literal string
 }
 
 const (
@@ -36,35 +37,70 @@ func isValidToken(token rune) bool {
 	return unicode.IsDigit(token)
 }
 
+func isValidNumber(token string) bool {
+	runes := []rune(token)
+
+	for _, r := range runes {
+		if !unicode.IsNumber(r) || unicode.IsSpace(r) {
+			return false
+		}
+	}
+
+	return true
+}
+
 func tokenize(input string) ([]Token, error) {
 	tokens := make([]Token, 0)
 
-	for _, c := range input {
-		if unicode.IsSpace(c) {
+	runes := []rune(input)
+	for i := 0; i < len(runes); {
+		if unicode.IsSpace(runes[i]) {
+			i++
 			continue
 		}
 
-		if !isValidToken(c) {
-			return nil, fmt.Errorf("Invalid token: %c", c)
-		}
+		current := runes[i]
 
-		switch c {
+		switch current {
 		case '(':
 			tokens = append(tokens, Token{Type: LPAREN, Value: '('})
+			i++
 		case ')':
 			tokens = append(tokens, Token{Type: RPAREN, Value: ')'})
+			i++
 		case '+':
 			tokens = append(tokens, Token{Type: PLUS, Value: '+'})
+			i++
 		case '-':
 			tokens = append(tokens, Token{Type: MINUS, Value: '-'})
+			i++
 		case '*':
 			tokens = append(tokens, Token{Type: MULT, Value: '*'})
+			i++
 		case '/':
 			tokens = append(tokens, Token{Type: DIV, Value: '/'})
+			i++
 		default:
-			if unicode.IsDigit(c) {
-				tokens = append(tokens, Token{Type: NUMBER, Value: c})
+			if !isValidToken(runes[i]) {
+				return nil, fmt.Errorf("invalid token: %c", runes[i])
 			}
+
+			start := i
+			for i < len(runes) && unicode.IsDigit(runes[i]) {
+				i++
+			}
+
+			number := string(runes[start:i])
+			if !isValidNumber(number) {
+				return nil, fmt.Errorf("invalid token: %s", number)
+			}
+
+			token := Token{Type: NUMBER, Value: runes[start]}
+			if len(runes[start:i]) > 1 {
+				token.Literal = number
+			}
+
+			tokens = append(tokens, token)
 		}
 	}
 

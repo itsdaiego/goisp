@@ -16,6 +16,7 @@ type AST struct {
 type Node struct {
 	Operation   rune
 	Value       rune
+	Literal     string
 	Left, Right *Node
 }
 
@@ -26,7 +27,9 @@ func printTree(node *Node, depth int) {
 
 	indent := strings.Repeat("  ", depth)
 
-	if unicode.IsDigit(node.Value) {
+	if node.Literal != "" {
+		fmt.Printf("%s%s\n", indent, node.Literal)
+	} else if unicode.IsDigit(node.Value) {
 		fmt.Printf("%s%c\n", indent, node.Value)
 	} else {
 		fmt.Printf("%s%c\n", indent, node.Operation)
@@ -44,7 +47,19 @@ func main() {
 	input, _ := reader.ReadString('\n')
 	input = strings.TrimSpace(input)
 
-	tokenInputs, _ := tokenize(input)
+	tokenInputs, tokenizeErr := tokenize(input)
+	if tokenizeErr != nil {
+		fmt.Println("Error tokenizing input", tokenizeErr)
+		return
+	}
+
+	for _, token := range tokenInputs {
+		if token.Type == NUMBER && token.Literal != "" {
+			fmt.Printf("Token: Type=%s, Value=%s\n", token.Type, token.Literal)
+			continue
+		}
+		fmt.Printf("Token: Type=%s, Value=%c\n", token.Type, token.Value)
+	}
 
 	ast := &AST{
 		Tokens: tokenInputs,

@@ -14,10 +14,24 @@ func isOperation(token Token) bool {
 	return false
 }
 
+func tokenText(token Token) string {
+	if token.Type == NUMBER && token.Literal != "" {
+		return token.Literal
+	}
+	if token.Value == 0 {
+		return ""
+	}
+	return string(token.Value)
+}
+
 func (ast *AST) Parse(index int, parent interface{}) (int, error) {
+	if len(ast.Tokens) == 0 || index >= len(ast.Tokens) {
+		return 0, fmt.Errorf("syntax error: empty or incomplete expression")
+	}
+
 	// every expression should start with a '('
 	if ast.Tokens[index].Type != LPAREN {
-		return 0, fmt.Errorf("Syntax Error: Expected '(', found '%c'", ast.Tokens[index].Value)
+		return 0, fmt.Errorf("Syntax Error: Expected '(', found '%s'", tokenText(ast.Tokens[index]))
 	}
 
 	node := &Node{}
@@ -36,7 +50,11 @@ func (ast *AST) Parse(index int, parent interface{}) (int, error) {
 	index++
 
 	if index == len(ast.Tokens) || !isOperation(ast.Tokens[index]) {
-		return 0, fmt.Errorf("Syntax Error: Expected operator after '(', found '%c'", ast.Tokens[index].Value)
+		found := "EOF"
+		if index < len(ast.Tokens) {
+			found = tokenText(ast.Tokens[index])
+		}
+		return 0, fmt.Errorf("Syntax Error: Expected operator after '(', found '%s'", found)
 	}
 
 	if isOperation(ast.Tokens[index]) {
@@ -56,7 +74,8 @@ func (ast *AST) Parse(index int, parent interface{}) (int, error) {
 				return 0, err
 			}
 		} else if ast.Tokens[index].Type == NUMBER {
-			digitNode := &Node{Value: ast.Tokens[index].Value}
+			literal := ast.Tokens[index].Literal
+			digitNode := &Node{Value: ast.Tokens[index].Value, Literal: literal}
 			if operandCount == 0 {
 				node.Left = digitNode
 			} else {
@@ -64,7 +83,7 @@ func (ast *AST) Parse(index int, parent interface{}) (int, error) {
 			}
 			index++
 		} else {
-			return 0, fmt.Errorf("Syntax Error: Invalid token '%c' in expression", ast.Tokens[index].Value)
+			return 0, fmt.Errorf("Syntax Error: Invalid token '%s' in expression", tokenText(ast.Tokens[index]))
 		}
 
 		operandCount++
